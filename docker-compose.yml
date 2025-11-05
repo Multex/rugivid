@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      # Ajusta estos valores según tus necesidades o elimina la línea para usar los valores por defecto
+      DOWNLOAD_RATE_LIMIT_MAX: 5
+      DOWNLOAD_RATE_LIMIT_WINDOW_MINUTES: 60
+      DOWNLOAD_TTL_MINUTES: 15
+      DOWNLOAD_CLEANUP_INTERVAL_MINUTES: 5
+      DOWNLOAD_MAX_FILE_SIZE_MB: 500
+    ports:
+      - "127.0.0.1:8085:3000"
+    volumes:
+      - ./temp:/app/temp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
