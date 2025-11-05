@@ -28,6 +28,7 @@ const rateWindowMinutes = envInt('DOWNLOAD_RATE_LIMIT_WINDOW_MINUTES', 60, { min
 const maxDownloads = envInt('DOWNLOAD_RATE_LIMIT_MAX', 5, { min: 1 });
 
 const maxFileSizeMb = envInt('DOWNLOAD_MAX_FILE_SIZE_MB', 500, { min: 1 });
+const maxDownloadsPerFile = envInt('DOWNLOAD_MAX_DOWNLOADS_PER_FILE', 1, { min: 0 });
 const tempDir = process.env.DOWNLOAD_TEMP_DIR ?? 'temp';
 
 // Language configuration
@@ -40,6 +41,7 @@ const lang = supportedLanguages.includes(language) ? language : 'en';
  * @property {number} ttlMs
  * @property {number} cleanupIntervalMs
  * @property {number} maxFileSizeMb
+ * @property {number} maxDownloadsPerFile
  * @property {number} ttlMinutes
  * @property {number} cleanupMinutes
  *
@@ -61,6 +63,7 @@ export const appConfig = Object.freeze({
     ttlMs: ttlMinutes * 60 * 1000,
     cleanupIntervalMs: cleanupMinutes * 60 * 1000,
     maxFileSizeMb,
+    maxDownloadsPerFile,
     ttlMinutes,
     cleanupMinutes
   },

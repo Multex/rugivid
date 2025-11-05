@@ -8,8 +8,9 @@ Simple self-hosted video downloader with web UI using yt-dlp.
 - **Multi-language support**: English (default) and Spanish
 - **No database required**: Everything in memory and temporary filesystem
 - **Private downloads**: Unique UUID tokens per download, no shared history
+- **Configurable download limits**: Allow multiple downloads per file or single-use links
 - **Rate limiting**: Configurable per-IP limits
-- **Auto-cleanup**: Files automatically deleted after download or TTL expiration
+- **Auto-cleanup**: Files automatically deleted after reaching download limit or TTL expiration
 - **Docker ready**: Easy deployment with docker-compose
 
 ## Stack
@@ -80,17 +81,18 @@ Rugivid is configured via environment variables. Create a `.env` file or set the
 
 ### Available Variables
 
-See `.env.example` for all options. Key variables:
+See `.env.example` for detailed comments on each variable.
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `LANGUAGE` | Interface language: `en` or `es` | `en` |
-| `DOWNLOAD_TTL_MINUTES` | Minutes until file expires after completion | `15` |
-| `DOWNLOAD_CLEANUP_INTERVAL_MINUTES` | How often to clean expired files | `5` |
-| `DOWNLOAD_MAX_FILE_SIZE_MB` | Maximum file size allowed | `500` |
-| `DOWNLOAD_TEMP_DIR` | Temporary storage directory | `temp` |
-| `DOWNLOAD_RATE_LIMIT_MAX` | Max downloads per IP in time window | `5` |
-| `DOWNLOAD_RATE_LIMIT_WINDOW_MINUTES` | Rate limit time window | `60` |
+| Variable | Description | Default | Valid Values |
+|----------|-------------|---------|--------------|
+| `LANGUAGE` | Interface language | `en` | `en`, `es` |
+| `DOWNLOAD_TTL_MINUTES` | Minutes until file expires after completion | `15` | `1-∞` |
+| `DOWNLOAD_CLEANUP_INTERVAL_MINUTES` | How often to clean expired files (minutes) | `5` | `1-∞` |
+| `DOWNLOAD_MAX_FILE_SIZE_MB` | Maximum file size allowed (MB) | `500` | `1-∞` |
+| `DOWNLOAD_MAX_DOWNLOADS_PER_FILE` | Times a file can be downloaded before deletion (0 = unlimited) | `1` | `0-∞` |
+| `DOWNLOAD_TEMP_DIR` | Temporary storage directory | `temp` | Any valid path |
+| `DOWNLOAD_RATE_LIMIT_MAX` | Max downloads per IP in time window | `5` | `1-∞` |
+| `DOWNLOAD_RATE_LIMIT_WINDOW_MINUTES` | Rate limit time window (minutes) | `60` | `1-∞` |
 
 ### Language Support
 
@@ -157,7 +159,11 @@ Check download status.
 Status can be: `in_progress`, `completed`, or `error`
 
 #### GET `/api/download/:token`
-Download the file (marks it for deletion after download).
+Download the file. Increments the download counter for the file.
+
+Files are automatically deleted after:
+- Reaching the download limit (configured by `DOWNLOAD_MAX_DOWNLOADS_PER_FILE`)
+- OR when the TTL expires (configured by `DOWNLOAD_TTL_MINUTES`)
 
 **Response**: Binary file stream with appropriate content-type header.
 
@@ -224,9 +230,10 @@ Or use Nginx, Caddy, Traefik, etc.
 
 - Each download generates a unique UUID token
 - No history or metadata is shared between users
-- Files are automatically deleted after download or TTL expiration
-- Rate limiting prevents abuse
+- Files are automatically deleted after reaching download limit or TTL expiration
+- Rate limiting prevents abuse (configurable per-IP limits)
 - Configurable file size limits
+- Configurable download limits per file (prevent unlimited re-downloads or allow retry on failed downloads)
 - **Important**: Respect terms of service and copyright when downloading content
 
 ## Troubleshooting

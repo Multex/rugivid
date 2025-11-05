@@ -23,6 +23,7 @@ interface DownloadRecord {
   createdAt: number;
   updatedAt: number;
   expiresAt: number;
+  downloadCount: number;
   filePath?: string;
   filename?: string;
   downloadName?: string;
@@ -148,7 +149,8 @@ export async function startDownload(url: string, format: FormatOption, quality: 
     progress: 0,
     createdAt,
     updatedAt: createdAt,
-    expiresAt: createdAt + TTL_MS
+    expiresAt: createdAt + TTL_MS,
+    downloadCount: 0
   };
 
   downloads.set(token, record);
@@ -291,11 +293,25 @@ export function getDownloadStatus(token: string) {
   };
 }
 
-export async function markDownloaded(token: string) {
+export async function incrementDownloadCount(token: string) {
   const record = downloads.get(token);
   if (!record) return;
-  record.expiresAt = Date.now();
-  await cleanupRecord(token);
+
+  record.downloadCount++;
+  record.updatedAt = Date.now();
+
+  const maxDownloads = appConfig.download.maxDownloadsPerFile;
+
+  // If maxDownloadsPerFile is 0, unlimited downloads (only TTL cleanup applies)
+  if (maxDownloads === 0) {
+    return;
+  }
+
+  // If download limit reached, cleanup immediately
+  if (record.downloadCount >= maxDownloads) {
+    record.expiresAt = Date.now();
+    await cleanupRecord(token);
+  }
 }
 
 export function createDownloadStream(token: string) {
@@ -304,9 +320,16 @@ export function createDownloadStream(token: string) {
     return undefined;
   }
 
+  const maxDownloads = appConfig.download.maxDownloadsPerFile;
+
+  // Check if download limit already reached (0 = unlimited)
+  if (maxDownloads > 0 && record.downloadCount >= maxDownloads) {
+    return undefined;
+  }
+
   const stream = createReadStream(record.filePath);
   stream.on('close', () => {
-    void markDownloaded(token);
+    incrementDownloadCount(token);
   });
 
   return {
