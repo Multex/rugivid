@@ -1,68 +1,99 @@
-# Contribuir a Rugivid
+# Contributing to Rugivid
 
-¡Gracias por tu interés en contribuir! Este proyecto busca ser simple, seguro y fácil de desplegar. Las contribuciones son bienvenidas siempre que mantengan este espíritu.
+Thank you for your interest in contributing! This project aims to be simple, secure, and easy to deploy. Contributions are welcome as long as they maintain this spirit.
 
-## Cómo empezar
+## Getting Started
 
-- Usa Node 20+ y pnpm 8+
-- Clona el repo y ejecuta:
+- Use Node 20+ and pnpm 8+
+- Clone the repo and run:
   ```bash
   pnpm install
   cp .env.example .env
   pnpm dev
   ```
-- Para pruebas de descargas en desarrollo necesitas `yt-dlp` y `ffmpeg` instalados en tu sistema.
+- For download testing in development, you need `yt-dlp` and `ffmpeg` installed on your system.
 
-## Flujo de trabajo sugerido
+## Suggested Workflow
 
-1. Abre un issue describiendo bug/mejora (si aplica).
-2. Crea una rama con un nombre descriptivo.
-3. Mantén tus cambios enfocados y evita refactors grandes no relacionados.
-4. Verifica que el proyecto construye y funciona en dev/producción:
+1. Open an issue describing the bug/improvement (if applicable).
+2. Create a branch with a descriptive name.
+3. Keep your changes focused and avoid unrelated large refactors.
+4. Verify that the project builds and works in dev/production:
    ```bash
    pnpm dev
    pnpm build && pnpm start
    ```
-5. Abre un Pull Request explicando:
-   - Qué cambia y por qué
-   - Cómo probaste el cambio
-   - Impacto en configuración/infra (si aplica)
+5. Open a Pull Request explaining:
+   - What changes and why
+   - How you tested the change
+   - Impact on configuration/infrastructure (if applicable)
 
-## Estilo y convenciones
+## Style and Conventions
 
 - TypeScript/ESM, Node 20.
-- Código conciso y legible; utilitarios pequeños antes que grandes frameworks.
-- Evita dependencias innecesarias.
-- No introducir base de datos (in‑memory + filesystem temporal por diseño).
-- Mantén los endpoints y la UI simples; valida entrada con zod.
+- Concise and readable code; small utilities over large frameworks.
+- Avoid unnecessary dependencies.
+- No database (in-memory + temporary filesystem by design).
+- Keep endpoints and UI simple; validate input with zod.
 
-## Estructura relevante
+## Relevant Structure
 
-- `src/pages/*`: páginas Astro y adaptadores de API
-- `src/api/*`: lógica de endpoints y helpers
-- `server/*`: yt-dlp wrapper, i18n y configuración centralizada
-- `Dockerfile` y `docker-compose.yml`: empaquetado y despliegue
+- `src/pages/*`: Astro pages and API adapters
+- `src/api/*`: endpoint logic and helpers
+- `server/*`: yt-dlp wrapper, i18n, and centralized configuration
+- `Dockerfile` and `docker-compose.yml`: packaging and deployment
 
-## Seguridad
+## Security
 
-- No expongas datos sensibles en respuestas o logs.
-- Respeta el límite de tamaño y rate limit por IP.
-- Mantén la limpieza de archivos temporales (TTL) funcionando.
+- Do not expose sensitive data in responses or logs.
+- Respect file size limits and rate limiting per IP.
+- Keep temporary file cleanup (TTL) working properly.
 
-## Pruebas manuales básicas
+## Updating yt-dlp
 
-- POST `/api/download` con URLs de varias plataformas
-- GET `/api/status/:token` hasta `completed`
-- GET `/api/download/:token` y verifica que se elimina después
-- Verifica límites (429) y tamaño máximo
+**Important**: We don't use `pip` for yt-dlp. We use the official binary from GitHub.
 
-## Documentación
+- **In Docker**: The Dockerfile automatically downloads the latest version from GitHub releases on each build
+- **Local development**: Update manually with:
+  ```bash
+  curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+  chmod a+rx /usr/local/bin/yt-dlp
+  ```
 
-- Si tu cambio agrega opciones nuevas de configuración, actualiza `.env.example` y el `README.md`.
+## Basic Manual Testing
 
-## Conducta
+### Local testing (development)
+- POST `/api/download` with URLs from various platforms (YouTube, Twitter/X, TikTok, etc.)
+- GET `/api/status/:token` until `completed`
+- GET `/api/download/:token` and verify behavior according to `DOWNLOAD_MAX_DOWNLOADS_PER_FILE`:
+  - With value `1`: Download works once, then returns 404
+  - With value `3`: Allows 3 downloads, 4th fails
+  - With value `0`: Unlimited downloads (only deleted by TTL)
+- Verify rate limiting (429) by attempting multiple downloads from the same IP
+- Verify maximum size limit with large videos
 
-- Sé respetuoso, claro y colaborativo.
-- Mantén el enfoque en la calidad y la simplicidad del proyecto.
+### Testing with Docker
+```bash
+# Build and test in Docker
+docker compose build
+docker compose up -d
+docker compose logs -f
 
-¡Gracias por ayudar a mejorar Rugivid!
+# Test at http://localhost:8085
+# Verify that .env changes apply with: docker compose restart
+```
+
+## Documentation
+
+If your change adds new configuration options, update:
+- **`.env.example`**: Add the variable with descriptive comments explaining what it does, valid values, and default
+- **`server/config.js`**: Add the variable to the `appConfig` object with appropriate validation
+- **`README.md`**: Update the configuration table with the new variable, description, default, and valid values
+- **`CONTRIBUTING.md`**: If applicable, update manual tests to include test cases for the new feature
+
+## Conduct
+
+- Be respectful, clear, and collaborative.
+- Keep the focus on quality and simplicity of the project.
+
+Thank you for helping improve Rugivid!
