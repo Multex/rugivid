@@ -1,24 +1,24 @@
 ---
 name: Feature request
-about: Propón una mejora o nueva funcionalidad
-title: "[Feature] Descripción breve"
+about: Propose an improvement or new functionality
+title: "[Feature] Brief description"
 labels: enhancement
 assignees: ''
 ---
 
-Resumen
+Summary
 
-Describe la mejora y el problema que resuelve.
+Describe the improvement and the problem it solves.
 
-Alternativas consideradas
+Alternatives Considered
 
-Otras opciones que evaluaste.
+Other options you evaluated.
 
-Impacto
+Impact
 
-- UI/API/configuración afectada
-- Compatibilidad hacia atrás
+- Affected UI/API/configuration
+- Backwards compatibility
 
-Notas adicionales
+Additional Notes
 
-Mockups, enlaces, referencias.
+Mockups, links, references.

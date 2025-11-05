@@ -1,4 +1,4 @@
-# Contributing to Rugivid
+# Contributing to Amia
 
 Thank you for your interest in contributing! This project aims to be simple, secure, and easy to deploy. Contributions are welcome as long as they maintain this spirit.
 
@@ -96,4 +96,4 @@ If your change adds new configuration options, update:
 - Be respectful, clear, and collaborative.
 - Keep the focus on quality and simplicity of the project.
 
-Thank you for helping improve Rugivid!
+Thank you for helping improve Amia!

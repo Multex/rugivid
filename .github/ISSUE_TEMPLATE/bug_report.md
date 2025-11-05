@@ -1,32 +1,32 @@
 ---
 name: Bug report
-about: Reporta un problema con Rugivid
-title: "[Bug] Descripción breve"
+about: Report an issue with Amia
+title: "[Bug] Brief description"
 labels: bug
 assignees: ''
 ---
 
-Descripción del bug
+Bug Description
 
-Qué sucede y qué esperabas que sucediera.
+What happens and what you expected to happen.
 
-Pasos para reproducir
+Steps to Reproduce
 
 1. ...
 2. ...
 3. ...
 
-Entorno
+Environment
 
-- SO: (Debian/Arch/macOS/Windows/WSL)
+- OS: (Debian/Arch/macOS/Windows/WSL)
 - Node: (v20.x)
-- Navegador: (si aplica)
-- ¿Docker?: (sí/no) versión
+- Browser: (if applicable)
+- Docker?: (yes/no) version
 
-Logs relevantes
+Relevant Logs
 
-Adjunta logs recortados, tokens/URLs ficticias.
+Attach trimmed logs, use dummy tokens/URLs.
 
-Notas adicionales
+Additional Notes
 
-Cualquier contexto adicional.
+Any additional context.

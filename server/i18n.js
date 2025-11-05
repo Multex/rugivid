@@ -1,7 +1,7 @@
 const translations = {
   en: {
     // Page metadata
-    pageTitle: 'Rugivid - Video downloader',
+    pageTitle: 'Amia - Video downloader',
     pageSubtitle: 'Video downloader',
 
     // Form labels
@@ -64,7 +64,7 @@ const translations = {
   },
   es: {
     // Page metadata
-    pageTitle: 'Rugivid - Descargador de videos',
+    pageTitle: 'Amia - Descargador de videos',
     pageSubtitle: 'Descargador de videos',
 
     // Form labels
