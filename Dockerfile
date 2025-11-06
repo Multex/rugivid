@@ -23,6 +23,7 @@ RUN pnpm install --frozen-lockfile
 COPY tsconfig.json astro.config.mjs ./
 COPY server ./server
 COPY src ./src
+COPY public ./public
 
 RUN pnpm build
 RUN pnpm prune --prod
