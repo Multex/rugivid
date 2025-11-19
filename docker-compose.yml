@@ -12,7 +12,3 @@ services:
       - "127.0.0.1:8085:3000"
     volumes:
       - ./temp:/app/temp
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
