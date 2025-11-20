@@ -6,6 +6,7 @@ Simple self-hosted video downloader with web UI using yt-dlp.
 
 ## Features
 
+- **Modern UI**: "Midnight Glass" aesthetic with responsive design and smooth animations
 - **1000+ platforms supported** via yt-dlp (YouTube, TikTok, Twitter/X, Instagram, Vimeo, etc.)
 - **Multi-language support**: English (default) and Spanish
 - **No database required**: Everything in memory and temporary filesystem
@@ -13,7 +14,7 @@ Simple self-hosted video downloader with web UI using yt-dlp.
 - **Configurable download limits**: Allow multiple downloads per file or single-use links
 - **Rate limiting**: Configurable per-IP limits
 - **Auto-cleanup**: Files automatically deleted after reaching download limit or TTL expiration
-- **Docker ready**: Easy deployment with docker-compose
+- **Docker ready**: Optimized Alpine-based image with multi-stage build
 
 ## Why "Amia"?
 
@@ -65,7 +66,7 @@ pnpm start
 
 ```bash
 # Start (builds automatically on first run)
-docker compose up -d
+docker compose up -d --build
 
 # View logs
 docker compose logs -f
@@ -226,11 +227,11 @@ curl -L -o video.mp4 http://localhost:3000/api/download/$TOKEN
 
 ## Docker Deployment Details
 
-- Base image: `node:20-bookworm`
+- Base image: `node:20-alpine` (Lightweight & Secure)
 - Includes yt-dlp and ffmpeg
 - Exposed port: 3000 (mapped to 127.0.0.1:8085 in compose)
 - Volume: `./temp:/app/temp` for persistence between restarts
-- Security: Runs with `cap_drop: [ALL]` and `no-new-privileges: true`
+- **Optimized**: Uses multi-stage builds to keep image size small (~100MB)
 
 ### Behind a Reverse Proxy
 
@@ -269,9 +270,8 @@ The URL might not be supported by yt-dlp, or you might need to update yt-dlp.
 **Docker users:**
 ```bash
 # Rebuild the Docker image to get the latest yt-dlp version
-docker compose down
-docker compose build --no-cache
-docker compose up -d
+git pull
+docker compose up -d --build
 ```
 
 **Local development:**
